@@ -2,7 +2,7 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import Plotly from 'plotly.js-dist';
 import {Menu,Dimmer,Loader,Segment} from 'semantic-ui-react'; 
-import PlotComponent from './plot.js';
+import PlotComponent from './plot';
 import shortid from "shortid";
 import {findMin} from './AppService'
 import findMax from './AppService';
