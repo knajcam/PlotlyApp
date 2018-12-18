@@ -150,14 +150,12 @@ class AppFinal extends React.Component {
   handleIndividual(){
     if(this.state.individual==='Plot Individual Traces'){
       //document.getElementById('contourPlot').style.width='50%'
-      document.getElementById('contourPlot').style.marginLeft='0px'
       window.contourHighlight.fill('off') //if individual traces are hidden, reset contourHighlights to off
       document.getElementById("myDiv").style.display = "inline"; 
       this.setState({individual: 'Collaspe Individual Traces'})
     }
     else{
      // document.getElementById('contourPlot').style.width='100%'
-      document.getElementById('contourPlot').style.marginLeft='500px'
       document.getElementById("myDiv").style.display = "none";
       this.setState({individual: 'Plot Individual Traces'})
     }
