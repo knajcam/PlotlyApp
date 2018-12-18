@@ -81,7 +81,7 @@ class AppFinal extends React.Component {
           }
         })
         this.setState({contourData: contourTraces})    
-      },200)
+      },400)
       
       //for contourHighlighting
       setTimeout(() => {
@@ -94,7 +94,7 @@ class AppFinal extends React.Component {
         this.setState({contourHighlight: contourHighlight})
       },200)
       //this.contour()
-    },200)
+    },400)
 
     //individual plot data
     setTimeout(() => {
