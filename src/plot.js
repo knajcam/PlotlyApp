@@ -8,7 +8,7 @@ class PlotComponent extends React.Component{
       title:this.props.title,
       layout:{
         autosize:'true',
-        height: 140, 
+        height: 120, 
         title:this.props.title, 
         titlefont: {
           family: 'Courier New, monospace',
@@ -16,11 +16,10 @@ class PlotComponent extends React.Component{
           color: 'white'
         },
         showlegend: true,
-        //fix
         colorway : [this.props.color], 
         xaxis:{
           title:'Time (s)',
-          range: [0, this.props.max],
+          range: [0, this.props.max_x],
           titlefont: {
             family: 'Courier New, monospace',
             size: 10,
@@ -48,7 +47,6 @@ class PlotComponent extends React.Component{
       },
       display: 'inline'
     };
-
     this.handleClose = this.handleClose.bind(this);
   }
 
@@ -75,20 +73,3 @@ class PlotComponent extends React.Component{
   }
 }
 export default PlotComponent
-/*
-      <div>
-        <Button style={{display: this.state.display,backgroundColor:'white'}} icon compact size='mini' onClick={this.handleClose}>
-          <Icon name='close'/>
-        </Button>
-        <Plot
-          divId={this.props.divId}
-          data={[
-            this.props.data,
-          ]}
-          style={{display: this.state.display,width: '100%', float: 'right'}}
-          layout={this.state.layout}
-          config={{displaylogo: false}}
-          useResizeHandler={true}
-        /> 
-      </div>
-      */
