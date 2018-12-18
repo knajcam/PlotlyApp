@@ -197,8 +197,6 @@ class AppFinal extends React.Component {
         Plotly.relayout(element, updateNoHighlight,0)
         window.contourHighlight[traceNumber]='off'
       }
-      console.log('window', window.contourHighlight)
-
     }
   }
 
