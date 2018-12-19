@@ -30,13 +30,12 @@ class AppFinal extends React.Component {
     this.handleIndividual = this.handleIndividual.bind(this);
     this.getFigureData = this.getFigureData.bind(this);
     this.handleClick = this.handleClick.bind(this);
-    this.test = this.test.bind(this);
-    this.test2 = this.test2.bind(this);
-
+    this.loadTraceData = this.loadTraceData.bind(this);
+    this.loadContourData = this.loadContourData.bind(this);
   }
 
   //TRACE DATA  
-  test(data){
+  loadTraceData(data){
     var x = [], y = [],cellNames, colors,max_x,traces=[];    
 
     max_x=Plotly.d3.max(Plotly.d3.values(data.t))
@@ -84,7 +83,7 @@ class AppFinal extends React.Component {
   }
 
   //CONTOUR DATA
-  test2(data){
+  loadContourData(data){
     var contourX = [], contourY = [],contourCellNames,contourTraces=[];
 
     contourCellNames=Object.keys(data) //extract the object keys from the data, each object key is cellName
@@ -126,9 +125,9 @@ class AppFinal extends React.Component {
 
   //Load data from json files and set state varibles
   componentDidMount(){ 
-    Plotly.d3.json(this.props.dataFile, this.test)
+    Plotly.d3.json(this.props.dataFile, this.loadTraceData)
     setTimeout(() => {
-      Plotly.d3.json(this.props.contourFile, this.test2)
+      Plotly.d3.json(this.props.contourFile, this.loadContourData)
     },400) 
   }
 
