@@ -30,111 +30,117 @@ class AppFinal extends React.Component {
     this.handleIndividual = this.handleIndividual.bind(this);
     this.getFigureData = this.getFigureData.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.test = this.test.bind(this);
+    this.test2 = this.test2.bind(this);
+
+  }
+
+  //TRACE DATA  
+  test(data){
+    var x = [], y = [],cellNames, colors,max_x,traces=[];    
+
+    max_x=Plotly.d3.max(Plotly.d3.values(data.t))
+    cellNames=Object.keys(data.traces) //extract the number of object keys in data, each object key is cellName
+    x=data.t;
+    for(var i=0;i<cellNames.length;i++){
+      y[i]=data.traces[cellNames[i]];
+    }
+
+    this.setState({x:x,y:[...y],max_x:max_x})
+    colors = ['#9CADFF', '#26AAE1', '#F9439E', '#DDA824', '#F9ED32', '#87C635', '#00BCA5', '#EA68D1', '#F42C52', '#AE95F9']
+    var colorsBase = ['#9CADFF', '#26AAE1',  '#F9439E', '#DDA824', '#F9ED32', '#87C635', '#00BCA5', '#EA68D1', '#F42C52', '#AE95F9'] //original set of colors
+    var colorsNewLength=colors.length;
+    var count=0;
+
+    //list of cellnames in json files, length of this varible is the number of cells i.e. the number of traces needed
+    this.setState({cellNames:cellNames},() => {
+      //Allow individual trace colors to repeat
+      while(colorsNewLength<this.state.cellNames.length){
+        colorsNewLength=colorsNewLength*2;
+        count++
+      }
+      for(var q=0;q<count;q++){
+        colors.push(...colorsBase)
+      }
+
+      for (var i = 0; i < this.state.cellNames.length; i++) {
+        //array of all the traces
+        traces.push({
+          x: this.state.x, //all traces have the same time scale (x values)
+          y: this.state.y[i],
+          type: 'scatter', //vs. scattergl (if scattergl is used then you can only have about 6-8 plots at a time otherwise you get error about to many active webgl contexts)
+          mode: 'lines',
+          line: {width: 1.5},
+          name: this.state.cellNames[i], //trace name is cellName
+          color: colors[i], //each trace has a different colour
+          bgColor: 'white'
+        })
+      }
+    })
+    this.setState({data: traces},()=>{
+      this.setState({maxy:findMax(this.state.data,this.state.data.length)});
+      this.setState({miny:findMin(this.state.data,this.state.data.length)});
+    })
+  }
+
+  //CONTOUR DATA
+  test2(data){
+    var contourX = [], contourY = [],contourCellNames,contourTraces=[];
+
+    contourCellNames=Object.keys(data) //extract the object keys from the data, each object key is cellName
+    for ( var i = 0; i < contourCellNames.length ; i++) {
+      if(!contourX[i]){
+        contourX[i] = []
+      }
+      if(!contourY[i]){
+        contourY[i] = []
+      }
+      for ( var j = 0; j < data[contourCellNames[i]].length; j++){
+        contourY[i][j] = data[contourCellNames[i]][j][1]
+        contourX[i].push(data[contourCellNames[i]][j][0])
+      }
+    }
+
+    this.setState({contourX:contourX,contourY:contourY,contourCellNames:contourCellNames},()=>{
+      //create array of all the contour traces, each contour is a seperate trace
+      for (var i = 0; i < this.state.cellNames.length; i++) {
+        contourTraces.push({
+          x: this.state.contourX[i],
+          y: this.state.contourY[i],
+          type: 'scatter',
+          mode: 'lines',
+          fill: 'toself',
+          line: {width: 1.5},
+          name: this.state.cellNames[i], //trace name is cellName
+        })
+      }
+    })
+    this.setState({contourData: contourTraces},()=>{
+      //used for highlighting contours when clicked
+      window.contourHighlight=[]
+      for(var t=0;t<this.state.contourData.length;t++){
+        window.contourHighlight[t]='off' //all contours start off unclicked i.e. off
+      }
+    }) 
   }
 
   //Load data from json files and set state varibles
   componentDidMount(){ 
-    //TRACE DATA  
-    var x = [], y = [],cellNames, colors,max_x,contourTraces=[],traces=[];    
-    //load individuial data file
-    Plotly.d3.json(this.props.dataFile, function(data){
-      max_x=Plotly.d3.max(Plotly.d3.values(data.t))
-      cellNames=Object.keys(data.traces) //extract the number of object keys in data, each object key is cellName
-      x=data.t;
-      for(var i=0;i<cellNames.length;i++){
-        y[i]=data.traces[cellNames[i]];
-      }
-    });
-    //because of asynchronity use setTimeout, individual trace data
+    Plotly.d3.json(this.props.dataFile, this.test)
     setTimeout(() => {
-      this.setState({x:x,y:[...y],max_x:max_x})
-      colors = ['#9CADFF', '#26AAE1', '#F9439E', '#DDA824', '#F9ED32', '#87C635', '#00BCA5', '#EA68D1', '#F42C52', '#AE95F9']
-      var colorsBase = ['#9CADFF', '#26AAE1',  '#F9439E', '#DDA824', '#F9ED32', '#87C635', '#00BCA5', '#EA68D1', '#F42C52', '#AE95F9'] //original set of colors
-      var colorsNewLength=colors.length;
-      var count=0;
-
-      //list of cellnames in json files, length of this varible is the number of cells i.e. the number of traces needed
-      this.setState({cellNames:cellNames},() => {
-        //Allow individual trace colors to repeat
-        while(colorsNewLength<this.state.cellNames.length){
-          colorsNewLength=colorsNewLength*2;
-          count++
-        }
-        for(var q=0;q<count;q++){
-          colors.push(...colorsBase)
-        }
-
-        for (var i = 0; i < this.state.cellNames.length; i++) {
-          //array of all the traces
-          traces.push({
-            x: this.state.x, //all traces have the same time scale (x values)
-            y: this.state.y[i],
-            type: 'scatter', //vs. scattergl (if scattergl is used then you can only have about 6-8 plots at a time otherwise you get error about to many active webgl contexts)
-            mode: 'lines',
-            line: {width: 1.5},
-            name: this.state.cellNames[i], //trace name is cellName
-            color: colors[i], //each trace has a different colour
-            bgColor: 'white'
-          })
-        }
-      })
-      this.setState({data: traces},()=>{
-        this.setState({maxy:findMax(this.state.data,this.state.data.length)});
-        this.setState({miny:findMin(this.state.data,this.state.data.length)});
-      })
+      Plotly.d3.json(this.props.contourFile, this.test2)
     },400) 
-
-    //CONTOUR DATA
-    var contourX = [], contourY = [],contourCellNames;
-    //load contour data file 
-    Plotly.d3.json(this.props.contourFile, function(data){
-      contourCellNames=Object.keys(data) //extract the object keys from the data, each object key is cellName
-      for ( var i = 0; i < contourCellNames.length ; i++) {
-        if(!contourX[i]){
-          contourX[i] = []
-        }
-        if(!contourY[i]){
-          contourY[i] = []
-        }
-        for ( var j = 0; j < data[contourCellNames[i]].length; j++){
-          contourY[i][j] = data[contourCellNames[i]][j][1]
-          contourX[i].push(data[contourCellNames[i]][j][0])
-        }
-      }
-    });
-    //because of asynchronity use setTimeout, contour plot data
-    setTimeout(() => {
-      this.setState({contourX:contourX,contourY:contourY,contourCellNames:contourCellNames},()=>{
-        //create array of all the contour traces, each contour is a seperate trace
-        for (var i = 0; i < this.state.cellNames.length; i++) {
-          contourTraces.push({
-            x: this.state.contourX[i],
-            y: this.state.contourY[i],
-            type: 'scatter',
-            mode: 'lines',
-            fill: 'toself',
-            line: {width: 1.5},
-            name: this.state.cellNames[i], //trace name is cellName
-          })
-        }
-      })
-      this.setState({contourData: contourTraces},()=>{
-        //used for highlighting contours when clicked
-        window.contourHighlight=[]
-        for(var t=0;t<this.state.contourData.length;t++){
-          window.contourHighlight[t]='off' //all contours start off unclicked i.e. off
-        }
-      })    
-    },400)   
   }
 
   componentWillUnmount() {
    //Clean up Plotly instances when component is about to unmount
-   Plotly.purge('contourPlot')
-   for(var t=0;t<this.state.data.length;t++){
-     var traceDivName=this.state.contourCellNames[t]
-     Plotly.purge(traceDivName)
-   }
+    if(document.getElementById('contourPlot')!==undefined){
+      Plotly.purge('contourPlot')
+      for(var t=0;t<this.state.data.length;t++){
+        var traceDivName=this.state.contourCellNames[t]
+        Plotly.purge(traceDivName)
+      }
+    }
   }
 
   //dynamically render PlotComponent
