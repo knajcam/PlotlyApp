@@ -2,7 +2,7 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import Plotly from 'plotly.js-dist';
 import {Menu,Dimmer,Loader,Segment} from 'semantic-ui-react'; 
-import PlotComponent from './plot';
+import PlotComponent from './Plot';
 import shortid from "shortid";
 import {findMin} from './AppService'
 import findMax from './AppService';
@@ -15,7 +15,6 @@ class AppFinal extends React.Component {
       y:[],
       data:[],  
       cellNames: [],
-      contourCellNames: [],
       individual: 'Collaspe Individual Traces',
       max_x: '',
       maxy:'',
@@ -23,6 +22,7 @@ class AppFinal extends React.Component {
       contourX:[],
       contourY:[],
       contourData:[],
+      contourCellNames: [],
       contourHighlight:[]
     };
 
@@ -49,11 +49,11 @@ class AppFinal extends React.Component {
     setTimeout(() => {
       this.setState({x:x,y:[...y],max_x:max_x})
       colors = ['#9CADFF', '#26AAE1', '#F9439E', '#DDA824', '#F9ED32', '#87C635', '#00BCA5', '#EA68D1', '#F42C52', '#AE95F9']
-      var colorsBase = ['#9CADFF', '#26AAE1',  '#F9439E', '#DDA824', '#F9ED32', '#87C635', '#00BCA5', '#EA68D1', '#F42C52', '#AE95F9']
+      var colorsBase = ['#9CADFF', '#26AAE1',  '#F9439E', '#DDA824', '#F9ED32', '#87C635', '#00BCA5', '#EA68D1', '#F42C52', '#AE95F9'] //original set of colors
       var colorsNewLength=colors.length;
       var count=0;
 
-      //list of cellnames is json files, length of this varible is the number of cells aka the number of traces needed
+      //list of cellnames in json files, length of this varible is the number of cells i.e. the number of traces needed
       this.setState({cellNames:cellNames},() => {
         //Allow individual trace colors to repeat
         while(colorsNewLength<this.state.cellNames.length){
@@ -73,7 +73,7 @@ class AppFinal extends React.Component {
             mode: 'lines',
             line: {width: 1.5},
             name: this.state.cellNames[i], //trace name is cellName
-            color: colors[i], //each trace has unique colour
+            color: colors[i], //each trace has a different colour
             bgColor: 'white'
           })
         }
@@ -88,7 +88,7 @@ class AppFinal extends React.Component {
     var contourX = [], contourY = [],contourCellNames;
     //load contour data file 
     Plotly.d3.json(this.props.contourFile, function(data){
-      contourCellNames=Object.keys(data) //extract the object keys in data, each object key is cellName
+      contourCellNames=Object.keys(data) //extract the object keys from the data, each object key is cellName
       for ( var i = 0; i < contourCellNames.length ; i++) {
         if(!contourX[i]){
           contourX[i] = []
@@ -219,7 +219,9 @@ class AppFinal extends React.Component {
                 ...this.state.contourData
               ]}
               style={{width: '50%', float: 'left'}}
-              layout={{hovermode:'closest', height:window.innerHeight-50 , autosize:'true', title: 'Contour Plot',titlefont: {size: 15,color: 'white'}, colorway : ['#9CADFF', '#26AAE1', '#F9439E', '#DDA824', '#F9ED32', '#87C635', '#00BCA5', '#EA68D1', '#F42C52', '#AE95F9'], showlegend: true, xaxis:{title:'',range: [0, 601],titlefont: {size: 15,color: 'white'}}, yaxis:{title:'', titlefont: {size: 15,color: 'white'},range: [0, 600]}}}
+              layout={{hovermode:'closest', height:window.innerHeight-50 , autosize:'true', title: 'Contour Plot',titlefont: {size: 15,color: 'black'}, 
+                colorway : ['#9CADFF', '#26AAE1', '#F9439E', '#DDA824', '#F9ED32', '#87C635', '#00BCA5', '#EA68D1', '#F42C52', '#AE95F9'], 
+                showlegend: true, xaxis:{title:'Time (s)',range: [0, 601],titlefont: {size: 15,color: 'black'}}, yaxis:{title:'', titlefont: {size: 15,color: 'black'},range: [0, 600]}}}
               config={{displaylogo: false,displayModeBar: false}}
               useResizeHandler={true}
             />
