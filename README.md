@@ -19,3 +19,5 @@ NOTES:
     1. dataFile: json file containing data for a scatter plot trace of each cell, see 'public/striatum_f410_traces.json for example'
     
     2. contourFile: json file containing data to plot contour of each cell, see 'public/striatum_f410_contours.json for example'
+
+-if App is showing loading screen for a long time, refresh page.

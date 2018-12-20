@@ -126,14 +126,15 @@ class AppFinal extends React.Component {
   //Load data from json files and set state varibles
   componentDidMount(){ 
     Plotly.d3.json(this.props.dataFile, this.loadTraceData)
+    //use setTimeout due to asynchronity
     setTimeout(() => {
       Plotly.d3.json(this.props.contourFile, this.loadContourData)
-    },400) 
+    },1000) 
   }
 
   componentWillUnmount() {
    //Clean up Plotly instances when component is about to unmount
-    if(document.getElementById('contourPlot')!==undefined){
+    if(document.getElementById('contourPlot')!==null){
       Plotly.purge('contourPlot')
       for(var t=0;t<this.state.data.length;t++){
         var traceDivName=this.state.contourCellNames[t]
