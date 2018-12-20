@@ -6,7 +6,8 @@ TO INSTALL AND RUN:
 2. cd into PlotlyApp directory
 2. run npm install
 3. run npm start
-4. open http://localhost:3000/ in browser
+4. wait for development server to start
+5. open http://localhost:3000/ in browser
 
 NOTES:
 
